@@ -1,6 +1,10 @@
 <template>
     <div class="row">
 
+        <div v-if="data.loading">
+            <app-loader/>
+        </div>
+
         <div class="col-auto mb-4"
             v-for="(user) in data.users"
             :key="user.id"
@@ -27,9 +31,12 @@
 
 <script setup>
     import axios from 'axios';
+    import {useToast} from 'vue-toast-notification';
     import { onMounted, reactive } from 'vue';
 
+    const $toast = useToast();
     const data = reactive({
+        loading:true,
         users:[]
     })
 
@@ -37,9 +44,10 @@
         axios.get(`http://localhost:3004/users`)
         .then(response=>{
             data.users = response.data;
+            data.loading = false;
         })
         .catch(error =>{
-            console.log(error)
+            $toast.error('Sorry, something went wrong')
         })
     }
 
